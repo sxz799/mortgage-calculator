@@ -12,22 +12,39 @@ interface LoanRecord {
   monthlyIncome: number
   monthlyBalance: number
   date: string
+  loanYears: number
+  totalAmount: number
+  totalPayment: number
+  totalInterest: number
 }
 
-const downPayment = ref(0)
+const downPayment = ref(80)
 const gjjRate = ref(2.85)
-const gjjAmount = ref(0)
+const gjjAmount = ref(60)
 const businessRate = ref(3.1)
 const businessAmount = ref(0)
 const monthlyIncome = ref(0)
+const loanYears = ref(30)
 const records = ref<LoanRecord[]>(JSON.parse(localStorage.getItem('loanRecords') || '[]'))
+
+const totalAmount = computed(() => {
+  return Math.round((downPayment.value + gjjAmount.value + businessAmount.value) * 10000)
+})
+
+const totalPayment = computed(() => {
+  return monthlyPayment.value * loanYears.value * 12
+})
+
+const totalInterest = computed(() => {
+  return totalPayment.value - (gjjAmount.value + businessAmount.value) * 10000
+})
 
 const monthlyPayment = computed(() => {
   if (gjjAmount.value <= 0 && businessAmount.value <= 0) return 0
 
   const gjjMonthlyRate = gjjRate.value / 100 / 12
   const businessMonthlyRate = businessRate.value / 100 / 12
-  const months = 30 * 12
+  const months = loanYears.value * 12
 
   // 将万元转换为元进行计算
   const gjjMonthly = gjjAmount.value > 0
@@ -60,7 +77,11 @@ const saveRecord = () => {
     monthlyPayment: monthlyPayment.value,
     monthlyIncome: monthlyIncome.value,
     monthlyBalance: monthlyBalance.value,
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
+    loanYears: loanYears.value,
+    totalAmount: totalAmount.value,
+    totalPayment: totalPayment.value,
+    totalInterest: totalInterest.value
   }
 
   records.value.unshift(record)
@@ -84,6 +105,11 @@ const clearRecords = () => {
         <el-form-item label="首付金额">
           <el-input-number v-model="downPayment" :min="0" :step="1" :precision="2" />
           <span class="unit">万元</span>
+        </el-form-item>
+
+        <el-form-item label="贷款年限">
+          <el-input-number v-model="loanYears" :min="1" :max="30" :step="1" :precision="0" />
+          <span class="unit">年</span>
         </el-form-item>
 
         <el-form-item label="公积金贷款">
@@ -116,6 +142,17 @@ const clearRecords = () => {
             <span class="amount" :style="{ color: monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">{{ monthlyBalance }}</span>
             <span class="unit">元</span>
           </div>
+          <div class="result">
+            <span class="label">房款总额：</span>
+            <span class="amount">{{ Math.round(totalAmount / 10000) }}</span>
+            <span class="unit">万元</span>
+            <span class="label" style="margin-left: 20px;">还款总额：</span>
+            <span class="amount">{{ totalPayment }}</span>
+            <span class="unit">元</span>
+            <span class="label" style="margin-left: 20px;">支付利息：</span>
+            <span class="amount">{{ totalInterest }}</span>
+            <span class="unit">元</span>
+          </div>
         </el-form-item>
 
         <el-form-item>
@@ -132,7 +169,16 @@ const clearRecords = () => {
         </div>
       </template>
       <el-table :data="records" style="width: 100%">
-        <el-table-column prop="date" label="日期" width="180" />
+        <el-table-column prop="loanYears" label="贷款年限" width="120">
+          <template #default="scope">
+            {{ scope.row.loanYears }} 年
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalAmount" label="总房款" width="130">
+          <template #default="scope">
+            {{ scope.row.totalAmount }} 元
+          </template>
+        </el-table-column>
         <el-table-column prop="downPayment" label="首付" width="100">
           <template #default="scope">
             {{ scope.row.downPayment }} 万元
@@ -160,7 +206,9 @@ const clearRecords = () => {
         </el-table-column>
         <el-table-column prop="monthlyPayment" label="月供" width="120">
           <template #default="scope">
-            {{ scope.row.monthlyPayment }} 元
+            <span :style="{ color: '#409EFF', fontWeight: 'bold' }">
+              {{ scope.row.monthlyPayment }} 元
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="monthlyIncome" label="月收入" width="120">
@@ -173,6 +221,31 @@ const clearRecords = () => {
             <span :style="{ color: scope.row.monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">
               {{ scope.row.monthlyBalance }} 元
             </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="loanYears" label="贷款年限" width="120">
+          <template #default="scope">
+            {{ scope.row.loanYears }} 年
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalAmount" label="房款总额" width="130">
+          <template #default="scope">
+            {{ scope.row.totalAmount }} 元
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPayment" label="还款总额" width="130">
+          <template #default="scope">
+            {{ scope.row.totalPayment }} 元
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalInterest" label="支付利息" width="130">
+          <template #default="scope">
+            {{ scope.row.totalInterest }} 元
+          </template>
+        </el-table-column>
+        <el-table-column prop="monthlyIncome" label="月收入" width="120">
+          <template #default="scope">
+            {{ scope.row.monthlyIncome }} 元
           </template>
         </el-table-column>
       </el-table>
