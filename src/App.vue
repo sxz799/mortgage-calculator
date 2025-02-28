@@ -94,6 +94,17 @@ const clearRecords = () => {
   localStorage.removeItem('loanRecords')
   ElMessage.success('记录已清空')
 }
+
+const deleteRecord = (index: number) => {
+  records.value.splice(index, 1)
+  localStorage.setItem('loanRecords', JSON.stringify(records.value))
+  ElMessage.success('记录已删除')
+}
+
+const handleDragEnd = () => {
+  localStorage.setItem('loanRecords', JSON.stringify(records.value))
+  ElMessage.success('排序已保存')
+}
 </script>
 
 <template>
@@ -168,84 +179,64 @@ const clearRecords = () => {
           <span>历史记录</span>
         </div>
       </template>
-      <el-table :data="records" style="width: 100%">
-        <el-table-column prop="loanYears" label="贷款年限" width="120">
+      <el-table :data="records" style="width: 100%" row-key="date" @row-end="handleDragEnd" row-draggable>
+        <el-table-column prop="loanYears" label="贷款年限" width="90">
           <template #default="scope">
             {{ scope.row.loanYears }} 年
           </template>
         </el-table-column>
-        <el-table-column prop="totalAmount" label="总房款" width="130">
+        <el-table-column prop="totalAmount" label="总房款" width="150">
           <template #default="scope">
             {{ scope.row.totalAmount }} 元
           </template>
         </el-table-column>
-        <el-table-column prop="downPayment" label="首付" width="100">
+        <el-table-column prop="downPayment" label="首付" width="110">
           <template #default="scope">
             {{ scope.row.downPayment }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="gjjAmount" label="公积金贷款" width="130">
+        <el-table-column prop="gjjAmount" label="公积金贷款" width="120">
           <template #default="scope">
             {{ scope.row.gjjAmount }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="gjjRate" label="公积金利率" width="120">
-          <template #default="scope">
-            {{ scope.row.gjjRate }}%
-          </template>
-        </el-table-column>
-        <el-table-column prop="businessAmount" label="商业贷款" width="130">
+        <el-table-column prop="businessAmount" label="商业贷款" width="120">
           <template #default="scope">
             {{ scope.row.businessAmount }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="businessRate" label="商业利率" width="120">
-          <template #default="scope">
-            {{ scope.row.businessRate }}%
-          </template>
-        </el-table-column>
-        <el-table-column prop="monthlyPayment" label="月供" width="120">
+        <el-table-column prop="monthlyPayment" label="月供" width="130">
           <template #default="scope">
             <span :style="{ color: '#409EFF', fontWeight: 'bold' }">
               {{ scope.row.monthlyPayment }} 元
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyIncome" label="月收入" width="120">
+        <el-table-column prop="monthlyIncome" label="月收入" width="130">
           <template #default="scope">
             {{ scope.row.monthlyIncome }} 元
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyBalance" label="每月剩余">
+        <el-table-column prop="monthlyBalance" label="每月剩余" width="130">
           <template #default="scope">
             <span :style="{ color: scope.row.monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">
               {{ scope.row.monthlyBalance }} 元
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="loanYears" label="贷款年限" width="120">
-          <template #default="scope">
-            {{ scope.row.loanYears }} 年
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalAmount" label="房款总额" width="130">
-          <template #default="scope">
-            {{ scope.row.totalAmount }} 元
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPayment" label="还款总额" width="130">
+        <el-table-column prop="totalPayment" label="还款总额" width="150">
           <template #default="scope">
             {{ scope.row.totalPayment }} 元
           </template>
         </el-table-column>
-        <el-table-column prop="totalInterest" label="支付利息" width="130">
+        <el-table-column prop="totalInterest" label="支付利息" width="150">
           <template #default="scope">
             {{ scope.row.totalInterest }} 元
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyIncome" label="月收入" width="120">
+        <el-table-column label="操作" width="80" fixed="right">
           <template #default="scope">
-            {{ scope.row.monthlyIncome }} 元
+            <el-button type="danger" size="small" @click="deleteRecord(scope.$index)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -255,7 +246,7 @@ const clearRecords = () => {
 
 <style scoped>
 .container {
-  max-width: 1200px;
+  max-width: 95%;
   margin: 0 auto;
   padding: 10px;
 }
