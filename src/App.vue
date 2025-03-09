@@ -193,7 +193,7 @@ const handleDragEnd = () => {
             {{ scope.row.loanYears }} 年
           </template>
         </el-table-column>
-        <el-table-column prop="totalAmount" label="总房款" width="auto">
+        <el-table-column prop="totalAmount" label="总房款" width="100">
           <template #default="scope">
             {{ Math.round(scope.row.totalAmount / 10000) }} 万元
           </template>
