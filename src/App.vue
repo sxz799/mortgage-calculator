@@ -18,11 +18,11 @@ interface LoanRecord {
   totalInterest: number
 }
 
-const downPayment = ref(80)
+const downPayment = ref(85)
 const gjjRate = ref(2.85)
 const gjjAmount = ref(60)
 const businessRate = ref(3.1)
-const businessAmount = ref(0)
+const businessAmount = ref(50)
 const monthlyIncome = ref(0)
 const loanYears = ref(30)
 const records = ref<LoanRecord[]>(JSON.parse(localStorage.getItem('loanRecords') || '[]'))
@@ -110,11 +110,11 @@ const handleDragEnd = () => {
 <template>
   <div class="container">
     <h1>房贷计算器</h1>
-    
+
     <el-card class="calculator">
       <el-form label-width="120px">
         <el-form-item label="首付金额">
-          <el-input-number v-model="downPayment" :min="0" :step="1" :precision="2" />
+          <el-input-number v-model="downPayment" :min="0" :step="1" :precision="0" />
           <span class="unit">万元</span>
         </el-form-item>
 
@@ -124,7 +124,7 @@ const handleDragEnd = () => {
         </el-form-item>
 
         <el-form-item label="公积金贷款">
-          <el-input-number v-model="gjjAmount" :min="0" :step="1" :precision="2" />
+          <el-input-number v-model="gjjAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万元</span>
           <span class="label">利率：</span>
           <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
@@ -132,7 +132,7 @@ const handleDragEnd = () => {
         </el-form-item>
 
         <el-form-item label="商业贷款">
-          <el-input-number v-model="businessAmount" :min="0" :step="1" :precision="2" />
+          <el-input-number v-model="businessAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万元</span>
           <span class="label">利率：</span>
           <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
@@ -146,17 +146,25 @@ const handleDragEnd = () => {
 
         <el-form-item>
           <div class="result">
+            <span class="label">房款总额：</span>
+            <span class="amount">{{ Math.round(totalAmount / 10000) }}</span>
+            <span class="unit">万元</span>
+          </div>
+        </el-form-item>
+
+        <el-form-item>
+          <div class="result">
             <span class="label">月供：</span>
             <span class="amount">{{ monthlyPayment }}</span>
             <span class="unit">元</span>
             <span class="label" style="margin-left: 20px;">每月剩余：</span>
-            <span class="amount" :style="{ color: monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">{{ monthlyBalance }}</span>
+            <span class="amount" :style="{ color: monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">{{ monthlyBalance}}</span>
             <span class="unit">元</span>
           </div>
+        </el-form-item>
+
+        <!-- <el-form-item>
           <div class="result">
-            <span class="label">房款总额：</span>
-            <span class="amount">{{ Math.round(totalAmount / 10000) }}</span>
-            <span class="unit">万元</span>
             <span class="label" style="margin-left: 20px;">还款总额：</span>
             <span class="amount">{{ totalPayment }}</span>
             <span class="unit">元</span>
@@ -164,7 +172,7 @@ const handleDragEnd = () => {
             <span class="amount">{{ totalInterest }}</span>
             <span class="unit">元</span>
           </div>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item>
           <el-button type="primary" @click="saveRecord">保存记录</el-button>
@@ -173,68 +181,59 @@ const handleDragEnd = () => {
       </el-form>
     </el-card>
 
-    <el-card class="history" v-if="records.length > 0">
+    <el-card class="history">
       <template #header>
         <div class="card-header">
           <span>历史记录</span>
         </div>
       </template>
-      <el-table :data="records" style="width: 100%" row-key="date" @row-end="handleDragEnd" row-draggable>
-        <el-table-column prop="loanYears" label="贷款年限" width="90">
+      <el-table :data="records" row-key="date" @row-end="handleDragEnd" row-draggable>
+        <el-table-column prop="loanYears" label="贷款年限" width="auto">
           <template #default="scope">
             {{ scope.row.loanYears }} 年
           </template>
         </el-table-column>
-        <el-table-column prop="totalAmount" label="总房款" width="150">
+        <el-table-column prop="totalAmount" label="总房款" width="auto">
           <template #default="scope">
-            {{ scope.row.totalAmount }} 元
+            {{ Math.round(scope.row.totalAmount / 10000) }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="downPayment" label="首付" width="110">
+        <el-table-column prop="downPayment" label="首付" width="auto">
           <template #default="scope">
             {{ scope.row.downPayment }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="gjjAmount" label="公积金贷款" width="120">
+        <el-table-column prop="gjjAmount" label="公积金贷款" width="100">
           <template #default="scope">
             {{ scope.row.gjjAmount }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="businessAmount" label="商业贷款" width="120">
+        <el-table-column prop="businessAmount" label="商业贷款" width="auto">
           <template #default="scope">
             {{ scope.row.businessAmount }} 万元
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyPayment" label="月供" width="130">
+        <el-table-column prop="monthlyPayment" label="月供" width="auto">
           <template #default="scope">
             <span :style="{ color: '#409EFF', fontWeight: 'bold' }">
               {{ scope.row.monthlyPayment }} 元
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyIncome" label="月收入" width="130">
+        <el-table-column prop="monthlyIncome" label="月收入" width="auto">
           <template #default="scope">
             {{ scope.row.monthlyIncome }} 元
           </template>
         </el-table-column>
-        <el-table-column prop="monthlyBalance" label="每月剩余" width="130">
+        <el-table-column prop="monthlyBalance" label="每月剩余" width="110">
           <template #default="scope">
             <span :style="{ color: scope.row.monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">
               {{ scope.row.monthlyBalance }} 元
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPayment" label="还款总额" width="150">
-          <template #default="scope">
-            {{ scope.row.totalPayment }} 元
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalInterest" label="支付利息" width="150">
-          <template #default="scope">
-            {{ scope.row.totalInterest }} 元
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="80" fixed="right">
+        
+        <el-table-column label="操作" width="auto">
           <template #default="scope">
             <el-button type="danger" size="small" @click="deleteRecord(scope.$index)">删除</el-button>
           </template>
@@ -246,9 +245,9 @@ const handleDragEnd = () => {
 
 <style scoped>
 .container {
-  max-width: 95%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 10px;
+  padding: 0px;
 }
 
 @media screen and (max-width: 768px) {
