@@ -23,7 +23,7 @@ const gjjRate = ref(2.85)
 const gjjAmount = ref(60)
 const businessRate = ref(3.1)
 const businessAmount = ref(50)
-const monthlyIncome = ref(0)
+const monthlyIncome = ref(7000)
 const loanYears = ref(30)
 const records = ref<LoanRecord[]>(JSON.parse(localStorage.getItem('loanRecords') || '[]'))
 
@@ -140,7 +140,7 @@ const handleDragEnd = () => {
         </el-form-item>
 
         <el-form-item label="月收入">
-          <el-input-number v-model="monthlyIncome" :min="0" :step="1" :precision="0" />
+          <el-input-number v-model="monthlyIncome" :min="0" :step="100" :precision="0" />
           <span class="unit">元</span>
         </el-form-item>
 
