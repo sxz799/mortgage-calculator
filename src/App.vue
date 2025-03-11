@@ -46,7 +46,7 @@ const monthlyPayment = computed(() => {
   const businessMonthlyRate = businessRate.value / 100 / 12
   const months = loanYears.value * 12
 
-  // 将万元转换为元进行计算
+  // 将万转换为元进行计算
   const gjjMonthly = gjjAmount.value > 0
     ? (gjjAmount.value * 10000 * gjjMonthlyRate * Math.pow(1 + gjjMonthlyRate, months)) / (Math.pow(1 + gjjMonthlyRate, months) - 1)
     : 0
@@ -115,7 +115,7 @@ const handleDragEnd = () => {
       <el-form label-width="120px">
         <el-form-item label="首付金额">
           <el-input-number v-model="downPayment" :min="0" :step="1" :precision="0" />
-          <span class="unit">万元</span>
+          <span class="unit">万</span>
         </el-form-item>
 
         <el-form-item label="贷款年限">
@@ -125,7 +125,7 @@ const handleDragEnd = () => {
 
         <el-form-item label="公积金贷款">
           <el-input-number v-model="gjjAmount" :min="0" :step="1" :precision="0" />
-          <span class="unit">万元</span>
+          <span class="unit">万</span>
           <span class="label">利率：</span>
           <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
           <span class="unit">%</span>
@@ -133,7 +133,7 @@ const handleDragEnd = () => {
 
         <el-form-item label="商业贷款">
           <el-input-number v-model="businessAmount" :min="0" :step="1" :precision="0" />
-          <span class="unit">万元</span>
+          <span class="unit">万</span>
           <span class="label">利率：</span>
           <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
           <span class="unit">%</span>
@@ -147,8 +147,8 @@ const handleDragEnd = () => {
         <el-form-item>
           <div class="result">
             <span class="label">房款总额：</span>
-            <span class="amount">{{ Math.round(totalAmount / 10000) }}</span>
-            <span class="unit">万元</span>
+            <span style="color:red" class="amount">{{ Math.round(totalAmount / 10000) }}</span>
+            <span class="unit">万</span>
           </div>
         </el-form-item>
 
@@ -163,16 +163,16 @@ const handleDragEnd = () => {
           </div>
         </el-form-item>
 
-        <!-- <el-form-item>
+        <el-form-item>
           <div class="result">
-            <span class="label" style="margin-left: 20px;">还款总额：</span>
+            <span class="label">还款总额：</span>
             <span class="amount">{{ totalPayment }}</span>
             <span class="unit">元</span>
-            <span class="label" style="margin-left: 20px;">支付利息：</span>
+            <span class="label" style="margin-left: 20px;">总利息：</span>
             <span class="amount">{{ totalInterest }}</span>
             <span class="unit">元</span>
           </div>
-        </el-form-item> -->
+        </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="saveRecord">保存记录</el-button>
@@ -195,22 +195,22 @@ const handleDragEnd = () => {
         </el-table-column>
         <el-table-column prop="totalAmount" label="总房款" width="100">
           <template #default="scope">
-            {{ Math.round(scope.row.totalAmount / 10000) }} 万元
+            {{ Math.round(scope.row.totalAmount / 10000) }} 万
           </template>
         </el-table-column>
         <el-table-column prop="downPayment" label="首付" width="auto">
           <template #default="scope">
-            {{ scope.row.downPayment }} 万元
+            {{ scope.row.downPayment }} 万
           </template>
         </el-table-column>
         <el-table-column prop="gjjAmount" label="公积金贷款" width="100">
           <template #default="scope">
-            {{ scope.row.gjjAmount }} 万元
+            {{ scope.row.gjjAmount }} 万
           </template>
         </el-table-column>
         <el-table-column prop="businessAmount" label="商业贷款" width="auto">
           <template #default="scope">
-            {{ scope.row.businessAmount }} 万元
+            {{ scope.row.businessAmount }} 万
           </template>
         </el-table-column>
         <el-table-column prop="monthlyPayment" label="月供" width="auto">
@@ -218,6 +218,11 @@ const handleDragEnd = () => {
             <span :style="{ color: '#409EFF', fontWeight: 'bold' }">
               {{ scope.row.monthlyPayment }} 元
             </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalInterest" label="总利息" width="100">
+          <template #default="scope">
+            {{ scope.row.totalInterest }} 元
           </template>
         </el-table-column>
         <el-table-column prop="monthlyIncome" label="月收入" width="auto">
