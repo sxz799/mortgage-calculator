@@ -18,10 +18,10 @@ interface LoanRecord {
   totalInterest: number
 }
 
-const downPayment = ref(85)
-const gjjRate = ref(2.85)
+const downPayment = ref(80)
+const gjjRate = ref(2.6)
 const gjjAmount = ref(60)
-const businessRate = ref(3.1)
+const businessRate = ref(3)
 const businessAmount = ref(50)
 const monthlyIncome = ref(7000)
 const loanYears = ref(30)
