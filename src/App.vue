@@ -220,11 +220,6 @@ const handleDragEnd = () => {
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalInterest" label="总利息" width="100">
-          <template #default="scope">
-            {{ scope.row.totalInterest }} 元
-          </template>
-        </el-table-column>
         <el-table-column prop="monthlyIncome" label="月收入" width="auto">
           <template #default="scope">
             {{ scope.row.monthlyIncome }} 元
@@ -234,6 +229,14 @@ const handleDragEnd = () => {
           <template #default="scope">
             <span :style="{ color: scope.row.monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">
               {{ scope.row.monthlyBalance }} 元
+            </span>
+          </template>
+        </el-table-column>
+        
+        <el-table-column label="月供比例" width="110">
+          <template #default="scope">
+            <span :style="{ color: (scope.row.monthlyPayment / scope.row.monthlyIncome * 100) > 60 ? '#F56C6C' : (scope.row.monthlyPayment / scope.row.monthlyIncome * 100) > 40 ? '#E6A23C' : '#67C23A' }">
+              {{ Math.round(scope.row.monthlyPayment / scope.row.monthlyIncome * 100) }}%
             </span>
           </template>
         </el-table-column>
