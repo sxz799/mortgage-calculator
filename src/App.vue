@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+// @ts-ignore
+import Sortable from 'sortablejs'
 
 interface LoanRecord {
   downPayment: number
@@ -101,10 +103,23 @@ const deleteRecord = (index: number) => {
   ElMessage.success('记录已删除')
 }
 
-const handleDragEnd = () => {
-  localStorage.setItem('loanRecords', JSON.stringify(records.value))
-  ElMessage.success('排序已保存')
-}
+onMounted(() => {
+  const el = document.querySelector('.el-table__body-wrapper tbody')
+  if (el) {
+    new Sortable(el, {
+      animation: 150,
+      onEnd({ newIndex, oldIndex }: { newIndex: number; oldIndex: number }) {
+        if (newIndex === undefined || oldIndex === undefined) return
+        const recordsCopy = [...records.value]
+        const [moved] = recordsCopy.splice(oldIndex, 1)
+        recordsCopy.splice(newIndex, 0, moved)
+        records.value = recordsCopy
+        localStorage.setItem('loanRecords', JSON.stringify(records.value))
+      }
+    })
+  }
+})
+
 </script>
 
 <template>
@@ -187,7 +202,7 @@ const handleDragEnd = () => {
           <span>历史记录</span>
         </div>
       </template>
-      <el-table :data="records" row-key="date" @row-end="handleDragEnd" row-draggable>
+      <el-table :data="records" row-key="date">
         <el-table-column prop="loanYears" label="贷款年限" width="auto">
           <template #default="scope">
             {{ scope.row.loanYears }} 年
