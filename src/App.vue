@@ -20,11 +20,11 @@ interface LoanRecord {
   totalInterest: number
 }
 
-const downPayment = ref(80)
+const downPayment = ref(85)
 const gjjRate = ref(2.6)
-const gjjAmount = ref(60)
+const gjjAmount = ref(66)
 const businessRate = ref(3)
-const businessAmount = ref(50)
+const businessAmount = ref(54)
 const monthlyIncome = ref(7000)
 const loanYears = ref(30)
 const records = ref<LoanRecord[]>(JSON.parse(localStorage.getItem('loanRecords') || '[]'))
@@ -129,7 +129,7 @@ onMounted(() => {
     <el-card class="calculator">
       <el-form label-width="120px">
         <el-form-item label="首付金额">
-          <el-input-number v-model="downPayment" :min="0" :step="1" :precision="0" />
+          <el-input-number v-model="downPayment" :min="0" :step="5" :precision="0" />
           <span class="unit">万</span>
         </el-form-item>
 
