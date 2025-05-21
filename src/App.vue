@@ -23,7 +23,7 @@ interface LoanRecord {
 const downPayment = ref(85)
 const gjjRate = ref(2.6)
 const gjjAmount = ref(66)
-const businessRate = ref(3)
+const businessRate = ref(3.05)
 const businessAmount = ref(54)
 const monthlyIncome = ref(7000)
 const loanYears = ref(30)
@@ -142,7 +142,7 @@ onMounted(() => {
           <el-input-number v-model="gjjAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万</span>
           <span class="label">利率：</span>
-          <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
+          <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.05" :precision="2" class="rate-input" />
           <span class="unit">%</span>
         </el-form-item>
 
@@ -150,7 +150,7 @@ onMounted(() => {
           <el-input-number v-model="businessAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万</span>
           <span class="label">利率：</span>
-          <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.1" :precision="2" class="rate-input" />
+          <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.05" :precision="2" class="rate-input" />
           <span class="unit">%</span>
         </el-form-item>
 
