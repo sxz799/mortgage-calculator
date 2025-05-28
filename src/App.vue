@@ -126,8 +126,8 @@ onMounted(() => {
   <div class="container">
     <h1>房贷计算器</h1>
 
-    <el-card class="calculator">
-      <el-form label-width="120px">
+
+      <el-form label-width="auto">
         <el-form-item label="首付金额">
           <el-input-number v-model="downPayment" :min="0" :step="5" :precision="0" />
           <span class="unit">万</span>
@@ -141,16 +141,21 @@ onMounted(() => {
         <el-form-item label="公积金贷款">
           <el-input-number v-model="gjjAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万</span>
-          <span class="label">利率：</span>
-          <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.05" :precision="2" class="rate-input" />
+
+        </el-form-item>
+
+        <el-form-item label="利率：">
+          <el-input-number v-model="gjjRate" :min="0" :max="100" :step="0.05" :precision="2" />
           <span class="unit">%</span>
         </el-form-item>
 
         <el-form-item label="商业贷款">
           <el-input-number v-model="businessAmount" :min="0" :step="1" :precision="0" />
           <span class="unit">万</span>
-          <span class="label">利率：</span>
-          <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.05" :precision="2" class="rate-input" />
+
+        </el-form-item>
+        <el-form-item label="利率：">
+          <el-input-number v-model="businessRate" :min="0" :max="100" :step="0.05" :precision="2" />
           <span class="unit">%</span>
         </el-form-item>
 
@@ -158,111 +163,75 @@ onMounted(() => {
           <el-input-number v-model="monthlyIncome" :min="0" :step="100" :precision="0" />
           <span class="unit">元</span>
         </el-form-item>
-
-        <el-form-item>
-          <div class="result">
-            <span class="label">房款总额：</span>
-            <span style="color:red" class="amount">{{ Math.round(totalAmount / 10000) }}</span>
-            <span class="unit">万</span>
-          </div>
-        </el-form-item>
-
-        <el-form-item>
-          <div class="result">
-            <span class="label">月供：</span>
-            <span class="amount">{{ monthlyPayment }}</span>
-            <span class="unit">元</span>
-            <span class="label" style="margin-left: 20px;">每月剩余：</span>
-            <span class="amount" :style="{ color: monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">{{ monthlyBalance}}</span>
-            <span class="unit">元</span>
-          </div>
-        </el-form-item>
-
-        <el-form-item>
-          <div class="result">
-            <span class="label">还款总额：</span>
-            <span class="amount">{{ totalPayment }}</span>
-            <span class="unit">元</span>
-            <span class="label" style="margin-left: 20px;">总利息：</span>
-            <span class="amount">{{ totalInterest }}</span>
-            <span class="unit">元</span>
-          </div>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="saveRecord">保存记录</el-button>
-          <el-button @click="clearRecords">清空记录</el-button>
-        </el-form-item>
+        <el-button type="primary" @click="saveRecord">保存记录</el-button>
+        <el-button @click="clearRecords">清空记录</el-button>
       </el-form>
-    </el-card>
 
-    <el-card class="history">
-      <template #header>
-        <div class="card-header">
-          <span>历史记录</span>
-        </div>
-      </template>
-      <el-table :data="records" row-key="date">
-        <el-table-column prop="loanYears" label="贷款年限" width="auto">
-          <template #default="scope">
-            {{ scope.row.loanYears }} 年
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalAmount" label="总房款" width="100">
-          <template #default="scope">
-            {{ Math.round(scope.row.totalAmount / 10000) }} 万
-          </template>
-        </el-table-column>
-        <el-table-column prop="downPayment" label="首付" width="auto">
-          <template #default="scope">
-            {{ scope.row.downPayment }} 万
-          </template>
-        </el-table-column>
-        <el-table-column prop="gjjAmount" label="公积金贷款" width="100">
-          <template #default="scope">
-            {{ scope.row.gjjAmount }} 万
-          </template>
-        </el-table-column>
-        <el-table-column prop="businessAmount" label="商业贷款" width="auto">
-          <template #default="scope">
-            {{ scope.row.businessAmount }} 万
-          </template>
-        </el-table-column>
-        <el-table-column prop="monthlyPayment" label="月供" width="auto">
-          <template #default="scope">
-            <span :style="{ color: '#409EFF', fontWeight: 'bold' }">
-              {{ scope.row.monthlyPayment }} 元
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="monthlyIncome" label="月收入" width="auto">
-          <template #default="scope">
-            {{ scope.row.monthlyIncome }} 元
-          </template>
-        </el-table-column>
-        <el-table-column prop="monthlyBalance" label="每月剩余" width="110">
-          <template #default="scope">
-            <span :style="{ color: scope.row.monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">
-              {{ scope.row.monthlyBalance }} 元
-            </span>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="月供比例" width="110">
-          <template #default="scope">
-            <span :style="{ color: (scope.row.monthlyPayment / scope.row.monthlyIncome * 100) > 60 ? '#F56C6C' : (scope.row.monthlyPayment / scope.row.monthlyIncome * 100) > 40 ? '#E6A23C' : '#67C23A' }">
-              {{ Math.round(scope.row.monthlyPayment / scope.row.monthlyIncome * 100) }}%
-            </span>
-          </template>
-        </el-table-column>
-        
-        <el-table-column label="操作" width="auto">
-          <template #default="scope">
-            <el-button type="danger" size="small" @click="deleteRecord(scope.$index)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+      <div class="result">
+        <span class="label">房款总额：</span>
+        <span style="color:red" class="amount">{{ Math.round(totalAmount / 10000) }}</span>
+        <span class="unit">万</span>
+      </div>
+
+
+
+      <div class="result">
+        <span class="label">月供：</span>
+        <span class="amount">{{ monthlyPayment }}</span>
+        <span class="unit">元</span>
+
+      </div>
+      <div class="result">
+        <span class="label" style="margin-left: 20px;">每月剩余：</span>
+        <span class="amount" :style="{ color: monthlyBalance < 0 ? '#F56C6C' : '#67C23A' }">{{ monthlyBalance }}</span>
+        <span class="unit">元</span>
+      </div>
+
+
+      <div class="result">
+        <span class="label">还款总额：</span>
+        <span class="amount">{{ totalPayment }}</span>
+        <span class="unit">元</span>
+
+      </div>
+
+      <div class="result">
+        <span class="label" style="margin-left: 20px;">总利息：</span>
+        <span class="amount">{{ totalInterest }}</span>
+        <span class="unit">元</span>
+      </div>
+
+
+
+
+
+
+
+
+    <el-table :data="records" style="width: 100%">
+      <el-table-column type="index" label="序号" min-width="10" />
+      <el-table-column type="expand" label="详情" :default-expand-all="true" min-width="10">
+        <template #default="scope">
+          <div style="width: 100%;">
+            <p>贷款年限: {{ scope.row.loanYears }}</p>
+            <p>总房款: {{ Math.round(scope.row.totalAmount / 10000) }} 万</p>
+            <p>首付: {{ scope.row.downPayment }} 万</p>
+            <p>公积金贷款: {{ scope.row.gjjAmount }} 万</p>
+            <p>商业贷款: {{ scope.row.businessAmount }} 万</p>
+            <p>月供: {{ scope.row.monthlyPayment }} 元</p>
+            <p>月收入: {{ scope.row.monthlyIncome }} 元</p>
+            <p>每月剩余: {{ scope.row.monthlyBalance }} 元</p>
+            <p>月供比例:{{ Math.round(scope.row.monthlyPayment / scope.row.monthlyIncome * 100) }}% </p>
+          </div>
+
+
+          <el-button type="danger" size="small" @click="deleteRecord(scope.$index)">删除</el-button>
+        </template>
+      </el-table-column>
+
+
+    </el-table>
+
   </div>
 </template>
 
@@ -291,10 +260,7 @@ onMounted(() => {
     width: 120px;
   }
 
-  .rate-input {
-    width: 80px;
-    margin-left: 10px;
-  }
+
 
   .unit {
     margin: 0 5px;
@@ -302,6 +268,8 @@ onMounted(() => {
   }
 
   .result {
+    border-bottom: 1px solid #e7dbdb;
+    align-items: center;
     font-size: 16px;
   }
 
@@ -322,9 +290,7 @@ h1 {
   margin-bottom: 30px;
 }
 
-.calculator {
-  margin-bottom: 30px;
-}
+
 
 .unit {
   margin: 0 10px;
@@ -347,7 +313,7 @@ h1 {
 }
 
 .history {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .card-header {
