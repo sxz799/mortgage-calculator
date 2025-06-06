@@ -20,11 +20,11 @@ interface LoanRecord {
   totalInterest: number
 }
 
-const downPayment = ref(85)
+const downPayment = ref(80)
 const gjjRate = ref(2.6)
-const gjjAmount = ref(66)
+const gjjAmount = ref(60)
 const businessRate = ref(3.05)
-const businessAmount = ref(54)
+const businessAmount = ref(60)
 const monthlyIncome = ref(7000)
 const loanYears = ref(30)
 const records = ref<LoanRecord[]>(JSON.parse(localStorage.getItem('loanRecords') || '[]'))
